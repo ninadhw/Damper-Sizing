@@ -2,12 +2,10 @@ import numpy as np
 import matplotlib.pyplot as mpl
 
 #curve fitting fr stiffning damper curve fitting
-x=np.array([4,10,15,20,25,30])
-y_extension=np.array([20,30,70,110,160,300])
-y_compression=np.array([20,30,70,120,240,500])
-
-p_extension = np.polyfit(x,y_extension,3)
-p_compression = np.polyfit(x,y_compression,3)
+speed = np.array([-30,-25,-20,-15,-10,-4,0,4,10,15,20,25,30])    
+dampingforce=np.array([-500,-240,-120,-70,-30,-20,0,20,30,70,110,160,300])
+z = np.polyfit(speed, dampingforce , 6)
+poly=np.poly1d(z)
 
 #print(p_extension)
 #print(p_compression)
@@ -82,30 +80,19 @@ d_vel[(len(damper_l)-1)]=0
 
 print("done...")
 
-mpl.figure(5)
+#mpl.figure(5)
 #mpl.plot(t,d_vel,'g')
-mpl.plot(t,Lin_Vel,'r')
-mpl.show()
+#mpl.plot(t,Lin_Vel,'r')
+#mpl.show()
 
 i=0
 f=np.empty(len(d_vel))
 
 for x in d_vel:
-    if x<0:
-        x=np.abs(x)
-        f[i]= (0.04323219* x**3)+(-1.10452167 * x**2)+(10.84459761 * x)+(-3.64703657) #cubic curve fit
-        if f[i]<0:
-            print('ping',i)
-    else:
-        f[i]= (0.01862338* x**3)+(-0.4570171* x**2)+(6.82536759* x)+(-1.38791612) #cubic curve fit
-        #if f[i]<0:
-        #    print('pong',i)
-    #if f[i]<0:
-        #f[i]=0
+    f[i]=poly(d_vel[i])
     i=i+1
 
 #plotting damper force response based on linear velocity
 #mpl.figure(6)
 mpl.plot(f)
 mpl.show()
-
