@@ -25,7 +25,7 @@ l=np.sqrt(DLA**2+LOS**2)                    #Actual lever arm length from centre
 OA = 90 - np.rad2deg(np.arctan2(DLA,LOS))   #Offset angle as the lever arm is mounted at the bottom of TT
 OA = np.deg2rad(OA)                         #Offset angle below the positive x axis
 
-t=np.linspace(0,(3/(0.63)),10000,True)
+t=np.linspace(0,(3/(0.63)),100,True)
 OMEGA=2*(np.pi)*f
 THETA=OMEGA*t
 AD= Th*np.sin(THETA)                        #Angular displacement: degree change through time
@@ -69,6 +69,18 @@ for x in d_vel:
     i=i+1
 
 #plotting damper force response based on linear velocity
-mpl.figure(6)
-mpl.plot(f)
+#mpl.figure(6)
+#mpl.plot(f)
+#mpl.show()
+
+fx_cap = (CPx-DML[0]*np.ones(len(CPx)))/damper_l
+fy_cap = (CPy-DML[1]*np.ones(len(CPy)))/damper_l
+
+rx_cap = (CPx - PL[0])/l
+ry_cap = (CPy - PL[1])/l
+
+M = f * l * (fy_cap*rx_cap - fx_cap*ry_cap)
+
+#plotting damper moment response against time
+mpl.plot(t,M,'r')
 mpl.show()
