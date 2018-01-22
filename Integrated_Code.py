@@ -11,6 +11,15 @@ dampingforce=np.array([-90,-70,-50,-30,-20,0,20,30,50,70,90])   #kg units
 z = np.polyfit(speed, 10*dampingforce , 6)                      #newton and mm/s units
 poly=np.poly1d(z)
 
+
+#wind forcing function
+Angle=np.array([-60,-50,-45,-40,-30,-20,-10,-5,0,5,10,20,30,40,45,50,60])
+torque=np.array([11.80,10.51,10.43,9.78,8.89,13.74,11.16,10.51,-1.62,-10.03,-10.67,-10.31,-8.89,-10.03,-10.67,-11.40,-12.37])
+wi=np.polyfit(-1*Angle, (torque*2000), 16)
+poly_wind=np.poly1d(z)
+
+
+
 #damper geometry and kinematics calculations (user inputs)
 GL=np.array([0,0])                          #Ground level coordinate  (base of VP) (x,y coordinate)
 PL=np.array([0,1500])                       #Pivot level (centre of rotation) (x,y coordinate)
@@ -66,11 +75,12 @@ def motion_equation(t , y):
     
     D_M = (f * l * (fy_cap*rx_cap - fx_cap*ry_cap))/1000 - (f2 * l * (fy_cap2*rx_cap2 - fx_cap2*ry_cap2))/1000 #damper moment
     K_M = k_tt * AD                             #spring force moment
+    tor=poly_wind(AD)
 
-    return[y[1], (-K_M  )/(Ipl)]
+    return[y[1], (-K_M + D_M - 1000*tor )/(Ipl)]
 
 r=ode(motion_equation, jac=None).set_integrator('dopri5', nsteps=100000)
-r.set_initial_value([0.1, 0], 0)
+r.set_initial_value([np.deg2rad(45), 0], 0)
 t1=100
 dt=0.01
 
@@ -87,4 +97,3 @@ tzone=np.linspace(0,t1,(t1/dt))
 mpl.plot(tzone,disp,'r')
 mpl.plot(tzone,vel,'b--')
 mpl.show()
-
