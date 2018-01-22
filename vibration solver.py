@@ -2,7 +2,7 @@
 from scipy.integrate import ode
 import matplotlib.pyplot as mpl
 def function(t , y):
-    return[y[1], -y[0] - 0.1*y[1] + 2 ]
+    return[y[1], -y[0] - 0.5*y[1  ] + 2 ]
 
 r=ode(function, jac=None).set_integrator('dopri5', nsteps=100)
 r.set_initial_value([10,0], 0)
