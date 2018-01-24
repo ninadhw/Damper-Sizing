@@ -13,13 +13,47 @@ poly=np.poly1d(z)
 
 
 #wind forcing function
-Angle=np.array([-60,-50,-45,-40,-30,-20,-10,-5,0,5,10,20,30,40,45,50,60])
-torque=np.array([11.80,10.51,10.43,9.78,8.89,13.74,11.16,10.51,-1.62,-10.03,-10.67,-10.31,-8.89,-10.03,-10.67,-11.40,-12.37])
-Angle=np.deg2rad(Angle)
-torque=torque*2000
 
-wi=np.polyfit(Angle, torque, 16)
-poly_wind=np.poly1d(z)
+angle=np.array([-1.04720,
+-0.87266,
+-0.78540,
+-0.69813,
+-0.52360,
+-0.34907,
+-0.17453,
+-0.08727,
+0.00000,
+0.08727,
+0.17453,
+0.34907,
+0.52360,
+0.69813,
+0.78540,
+0.87266,
+1.04720
+])
+
+table=np.array([23608.02,
+21020.84,
+20859.15,
+19565.55,
+17786.87,
+27488.80,
+22314.43,
+21020.84,
+-3233.98,
+-20050.65,
+-21344.24,
+-20616.60,
+-17786.87,
+-20050.65,
+-21344.24,
+-22799.53,
+-24739.92
+])
+
+wi=np.polyfit(-1*angle, table, 6)
+poly_wind=np.poly1d(wi)
 
 
 
@@ -79,12 +113,11 @@ def motion_equation(t , y):
     D_M = (f * l * (fy_cap*rx_cap - fx_cap*ry_cap))/1000 - (f2 * l * (fy_cap2*rx_cap2 - fx_cap2*ry_cap2))/1000 #damper moment
     K_M = k_tt * AD                             #spring force moment
     W_tor=poly_wind(AD)
-    #print('angle:',AD,'torque',W_tor*2000,'spring moment', K_M)
 
-    return[y[1], (-K_M   - W_tor*2000 + D_M )/(Ipl)]
+    return[y[1], (-K_M  +D_M - W_tor )/(Ipl)]
 
-r=ode(motion_equation, jac=None).set_integrator('dopri5', nsteps=100000)
-r.set_initial_value([np.deg2rad(15), 0], 0)
+r=ode(motion_equation, jac=None).set_integrator('dopri5', nsteps=10000)
+r.set_initial_value([np.deg2rad(5), 0], 0)
 t1=100
 dt=0.01
 
@@ -97,7 +130,7 @@ while r.successful() and r.t<t1:
     disp.append(b[0])
     vel.append(b[1])
     i=i+1
-tzone=np.linspace(0,t1,(t1/dt))
-mpl.plot(tzone,disp,'r')
-mpl.plot(tzone,vel,'b--')
+tzone=np.linspace(0,t1,(t1/dt),True)
+mpl.plot(tzone,np.rad2deg(disp),'r')
+mpl.plot(tzone,np.rad2deg(vel),'b--')
 mpl.show()
