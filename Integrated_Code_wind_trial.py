@@ -114,10 +114,10 @@ def motion_equation(t , y):
     K_M = k_tt * AD                             #spring force moment
     W_tor=poly_wind(AD)
 
-    return[y[1], (-K_M  +D_M - W_tor )/(Ipl)]
+    return[y[1], (-K_M + D_M - W_tor  )/(Ipl)]
 
 r=ode(motion_equation, jac=None).set_integrator('dopri5', nsteps=10000)
-r.set_initial_value([np.deg2rad(5), 0], 0)
+r.set_initial_value([np.deg2rad(0), 0], 0)
 t1=100
 dt=0.01
 
