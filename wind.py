@@ -44,7 +44,11 @@ torque=np.array([23608.02,
 -24739.92
 ])
 
-wi=np.polyfit(Angle, torque, 6)
+
+
+
+
+wi=np.polyfit( Angle, -1* torque, 9)
 poly_wind=np.poly1d(wi)
 
 angle=np.linspace(-1.05,1.05,100)
@@ -55,6 +59,8 @@ for x in angle:
     torque.append(t)
 
 mpl.plot(angle,torque)
+mpl.plot(angle, angle*6666.7,'r')
+mpl.plot (angle, angle*66666.7,'g')
 mpl.show()
-t=poly_wind(np.pi/3)
+t=poly_wind(0)
 print(t)
